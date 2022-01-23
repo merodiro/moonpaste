@@ -7,6 +7,9 @@
   "dependencies": {
     "turbo": "^1.0.28"
   },
+  "workspaces": [
+    "apps/*"
+  ],
   "turbo": {
     "pipeline": {
       "dev": {

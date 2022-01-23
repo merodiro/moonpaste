@@ -11,9 +11,35 @@ datasource db {
 }
 
 model Paste {
-  id      String @id @default(cuid())
-  content String
+  id           String   @id @default(cuid())
+  userId       String?  @unique @map("user_id")
+  content      String
+  url          String?
+  views        Int      @default(1)
+  lastViewedAt DateTime @default(now()) @map("last_viewed_at")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("paste")
+}
+
+model User {
+  id          String  @id @default(cuid())
+  displayName String  @map("display_name")
+  email       String?
+  password    String?
+  googleId    String? @map("google_id")
+  githubId    String? @map("github_id")
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  pastes Paste[]
+  @@index([email])
+  @@map("user")
 }
