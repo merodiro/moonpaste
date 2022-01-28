@@ -5,7 +5,7 @@
     "dev": "turbo run dev"
   },
   "dependencies": {
-    "turbo": "^1.0.28"
+    "turbo": "^1.0.29"
   },
   "workspaces": [
     "apps/*"
