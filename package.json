@@ -5,25 +5,10 @@
     "dev": "turbo run dev"
   },
   "dependencies": {
-    "turbo": "^1.0.29"
+    "turbo": "^1.1.1"
   },
   "workspaces": [
     "apps/*"
   ],
-  "turbo": {
-    "pipeline": {
-      "dev": {
-        "cache": false
-      },
-      "build": {
-        "outputs": [
-          "dist/**",
-          ".next/**"
-        ],
-        "dependsOn": [
-          "^build"
-        ]
-      }
-    }
-  }
+  "packageManager": "pnpm@6.11.0"
 }
