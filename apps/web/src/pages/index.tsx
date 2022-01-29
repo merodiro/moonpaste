@@ -32,7 +32,7 @@ const Home: NextPage = () => {
 
       <Grid.Container gap={2} justify="center">
         <Grid xs={6}>
-          <div>
+          <div className="flex flex-col items-end">
             <Textarea
               rows={30}
               cols={70}
