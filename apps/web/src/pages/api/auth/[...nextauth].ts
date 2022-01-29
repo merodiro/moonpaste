@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { Session, User } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 import GitHubProvider from 'next-auth/providers/github'
@@ -21,6 +21,7 @@ export default NextAuth({
       },
       async authorize(credentials, req) {
         // @todo: auth logic
+
         return null
       },
     }),
@@ -53,4 +54,10 @@ export default NextAuth({
       },
     },
   ],
+  callbacks: {
+    session: async ({ session, user }) => {
+      session.id = user.id
+      return Promise.resolve(session)
+    },
+  },
 })

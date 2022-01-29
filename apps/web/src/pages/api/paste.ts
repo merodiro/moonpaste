@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { v4 as uuidv4 } from 'uuid'
+import { getSession } from 'next-auth/react'
 
 import { Paste } from '@prisma/client'
 import prisma from '@/utils/prisma'
@@ -46,6 +47,7 @@ export default async function handler(req: ICreatePasteRequest, res: NextApiResp
   if (req.method === 'POST') {
     //@todo: validate content
 
+    const session = await getSession({ req })
     const fullContent = req.body.content
     let { content, url } = await getPasteContentAndUrl(fullContent)
 
@@ -53,6 +55,7 @@ export default async function handler(req: ICreatePasteRequest, res: NextApiResp
       data: {
         content,
         url,
+        userId: session?.id as string | undefined,
       },
     })
 
