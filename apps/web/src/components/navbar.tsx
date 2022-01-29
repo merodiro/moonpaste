@@ -77,7 +77,10 @@ export default function Navbar() {
           bordered
           zoomed
           squared
-          src={`https://avatar.oxro.io/avatar.svg?name=${session.data?.user?.name}`}
+          src={
+            session.data.user?.image ??
+            `https://avatar.oxro.io/avatar.svg?name=${session.data?.user?.name}`
+          }
         />
       )}
 
