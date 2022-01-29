@@ -22,6 +22,7 @@ importers:
       eslint-config-next: 12.0.9
       next: 12.0.9
       next-auth: ^4.1.2
+      next-themes: ^0.0.15
       prisma: ^3.8.1
       react: 17.0.2
       react-dom: 17.0.2
@@ -35,6 +36,7 @@ importers:
       '@supabase/supabase-js': 1.29.4
       next: 12.0.9_react-dom@17.0.2+react@17.0.2
       next-auth: 4.1.2_react-dom@17.0.2+react@17.0.2
+      next-themes: 0.0.15_b543ccecfd29856b35e58d884b6ddddd
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       superjson: 1.8.0
@@ -1503,6 +1505,18 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       uuid: 8.3.2
+    dev: false
+
+  /next-themes/0.0.15_b543ccecfd29856b35e58d884b6ddddd:
+    resolution: {integrity: sha512-LTmtqYi03c4gMTJmWwVK9XkHL7h0/+XrtR970Ujvtu3s0kZNeJN24aJsi4rkZOI8i19+qq6f8j+8Duwy5jqcrQ==}
+    peerDependencies:
+      next: '*'
+      react: '*'
+      react-dom: '*'
+    dependencies:
+      next: 12.0.9_react-dom@17.0.2+react@17.0.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /next-tick/1.0.0:

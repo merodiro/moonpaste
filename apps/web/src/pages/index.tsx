@@ -3,7 +3,7 @@ import Layout from '@/components/layout'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import { Textarea, Button } from '@nextui-org/react'
+import { Textarea, Button, Container, Grid } from '@nextui-org/react'
 
 const Home: NextPage = () => {
   const [pasteContent, setPasteContent] = useState('')
@@ -30,13 +30,24 @@ const Home: NextPage = () => {
         <title>Moon Paste</title>
       </Head>
 
-      <Textarea
-        labelPlaceholder="write your paste here :)"
-        value={pasteContent}
-        onChange={(e) => setPasteContent(e.target.value)}
-      />
+      <Grid.Container gap={2} justify="center">
+        <Grid xs={6}>
+          <div>
+            <Textarea
+              rows={30}
+              cols={70}
+              placeholder="your paste here :)"
+              value={pasteContent}
+              onChange={(e) => setPasteContent(e.target.value)}
+            />
 
-      <Button onClick={submitPaste}>Paste It!</Button>
+            <Button css={{ mt: '$2' }} size="sm" auto ghost onClick={submitPaste}>
+              create paste
+            </Button>
+          </div>
+        </Grid>
+        <Grid xs={4}></Grid>
+      </Grid.Container>
     </Layout>
   )
 }
