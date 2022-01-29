@@ -29,7 +29,7 @@ async function getPasteContentAndUrl(content: string): Promise<{ content: string
         upsert: false,
       })
 
-    if (error || !data) {
+    if (error || !data?.Key) {
       throw error ?? new Error('unable to create paste')
     }
 
