@@ -5,8 +5,8 @@ import { Avatar, Button, Container } from '@nextui-org/react'
 export default function Navbar() {
   const session = useSession()
   return (
-    <Container justify="space-between" alignItems="center" display="flex">
-      <h1>Moon Paste</h1>
+    <Container justify="space-between" alignItems="center" display="flex" className="my-2">
+      <h1 className="text-3xl font-bold">Moon Paste</h1>
 
       {session.status === 'authenticated' && (
         <Avatar

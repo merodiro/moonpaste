@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           dark: darkTheme.className,
         }}
       >
-        <NextUIProvider>
+        <NextUIProvider disableBaseline>
           <Component {...pageProps} />
         </NextUIProvider>
       </NextThemesProvider>
