@@ -16,7 +16,7 @@ type Props = {
 }
 
 function PastePage({ paste }: Props) {
-  return <p>{JSON.stringify(paste)}</p>
+  return <pre>{JSON.stringify(paste, null, 4)}</pre>
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
