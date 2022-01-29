@@ -1,10 +1,7 @@
+// @ts-nocheck
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 let supabase: SupabaseClient
-
-declare global {
-  var supabase: SupabaseClient
-}
 
 if (process.env.NODE_ENV === 'production') {
   supabase = createClient(

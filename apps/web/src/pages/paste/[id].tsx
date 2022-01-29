@@ -1,10 +1,6 @@
-import Layout from '@/components/layout'
-import { Paste } from '@prisma/client'
 import prisma from '@/utils/prisma'
-import type { GetServerSideProps, NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import { Paste } from '@prisma/client'
+import type { GetServerSideProps } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 
 interface IPageParams extends ParsedUrlQuery {
@@ -43,12 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
       props: {
-        paste: {
-          ...paste,
-          lastViewedAt: paste?.lastViewedAt.toString(),
-          createdAt: paste?.createdAt.toString(),
-          updatedAt: paste?.updatedAt.toString(),
-        },
+        paste,
       },
     }
   } catch (e) {
