@@ -16,36 +16,47 @@ type Props = {
 }
 
 function PastePage({ paste }: Props) {
+  if (!paste) {
+    return <pre>Paste not found</pre>
+  }
   return <pre>{JSON.stringify(paste, null, 4)}</pre>
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context?.params as IPageParams
 
-  const paste = await prisma.paste.update({
-    where: {
-      id,
-    },
-    data: {
-      views: {
-        increment: 1,
+  try {
+    const paste = await prisma.paste.update({
+      where: {
+        id,
       },
-      lastViewedAt: new Date(),
-    },
-    include: {
-      user: true,
-    },
-  })
+      data: {
+        views: {
+          increment: 1,
+        },
+        lastViewedAt: new Date(),
+      },
+      include: {
+        user: true,
+      },
+    })
 
-  return {
-    props: {
-      paste: {
-        ...paste,
-        lastViewedAt: paste?.lastViewedAt.toString(),
-        createdAt: paste?.createdAt.toString(),
-        updatedAt: paste?.updatedAt.toString(),
+    return {
+      props: {
+        paste: {
+          ...paste,
+          lastViewedAt: paste?.lastViewedAt.toString(),
+          createdAt: paste?.createdAt.toString(),
+          updatedAt: paste?.updatedAt.toString(),
+        },
       },
-    },
+    }
+  } catch (e) {
+    return {
+      props: {
+        paste: null,
+      },
+    }
   }
 }
 
