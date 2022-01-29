@@ -22,12 +22,12 @@ async function getPasteContentAndUrl(content: string): Promise<{ content: string
       CONTENT_BYTESIZE_THRESHOLD
     )
 
-    const name = `pastes/${uuidv4()}`
-
-    const { data, error } = await supabase.storage.from('pastes').upload(name, content, {
-      cacheControl: '3600',
-      upsert: false,
-    })
+    const { data, error } = await supabase.storage
+      .from('pastes')
+      .upload(`pastes/${uuidv4()}`, content, {
+        cacheControl: '3600',
+        upsert: false,
+      })
 
     if (error || !data) {
       throw error
