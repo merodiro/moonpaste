@@ -33,7 +33,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         lastViewedAt: new Date(),
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
       },
     })
 

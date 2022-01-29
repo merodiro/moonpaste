@@ -13,7 +13,7 @@ datasource db {
 
 model Paste {
   id           String   @id @default(cuid())
-  userId       String?  @unique @map("user_id")
+  userId       String?  @map("user_id")
   content      String
   url          String?
   views        Int      @default(1)
