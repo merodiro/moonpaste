@@ -5,7 +5,43 @@
 
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
+import { getSession } from 'next-auth/react'
+import { v4 as uuidv4 } from 'uuid'
+
 import { createRouter } from '../create-router'
+import { buildSupabasePublicUrl, contentSizeInBytes } from '@/utils/helpers'
+import supabase from '@/utils/supabase'
+import prisma from '@/utils/prisma'
+
+const CONTENT_BYTESIZE_THRESHOLD = 100 * 1000
+
+async function getPasteContentAndUrl(content: string): Promise<{ content: string; url?: string }> {
+  if (contentSizeInBytes(content) > CONTENT_BYTESIZE_THRESHOLD) {
+    const contentChunk = Buffer.from(content, 'utf8').toString(
+      'utf-8',
+      0,
+      CONTENT_BYTESIZE_THRESHOLD
+    )
+
+    const { data, error } = await supabase.storage
+      .from('pastes')
+      .upload(`pastes/${uuidv4()}`, content, {
+        cacheControl: '3600',
+        upsert: false,
+      })
+
+    if (error || !data?.Key) {
+      throw error ?? new Error('unable to create paste')
+    }
+
+    return {
+      content: contentChunk,
+      url: buildSupabasePublicUrl(data.Key),
+    }
+  } else {
+    return { content }
+  }
+}
 
 export const pasteRouter = createRouter()
   // create
@@ -14,11 +50,18 @@ export const pasteRouter = createRouter()
       content: z.string().min(1),
     }),
     async resolve({ ctx, input }) {
-      console.log('add', input)
-      const paste = await ctx.prisma.paste.create({
-        data: input,
+      const session = await getSession({ ctx })
+      const fullContent = input.content
+      let { content, url } = await getPasteContentAndUrl(fullContent)
+
+      const dbPaste = await prisma.paste.create({
+        data: {
+          content,
+          url,
+          userId: session?.id as string | undefined,
+        },
       })
-      return paste
+      return dbPaste
     },
   })
   // read
