@@ -4,24 +4,23 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { Textarea, Button, Container, Grid } from '@nextui-org/react'
+import { trpc } from '@/utils/trpc'
 
 const Home: NextPage = () => {
   const [pasteContent, setPasteContent] = useState('')
   const router = useRouter()
 
-  const submitPaste = async () => {
-    const res = await fetch('/api/paste', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        content: pasteContent,
-      }),
-    })
+  const addPaste = trpc.useMutation('paste.add')
 
-    const paste = await res.json()
-    router.push(`/paste/${paste.id}`)
+  const submitPaste = async () => {
+    try {
+      const paste = await addPaste.mutateAsync({
+        content: pasteContent,
+      })
+      router.push(`/paste/${paste.id}`)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return (

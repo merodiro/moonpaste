@@ -1,61 +1,14 @@
-import prisma from '@/utils/prisma'
-import { Paste } from '@prisma/client'
-import type { GetServerSideProps } from 'next'
-import { ParsedUrlQuery } from 'querystring'
+import { trpc } from '@/utils/trpc'
+import { useRouter } from 'next/router'
 
-interface IPageParams extends ParsedUrlQuery {
-  id: string
-}
+function PastePage() {
+  const router = useRouter()
+  const paste = trpc.useQuery(['paste.byId', { id: router.query.id as string }])
 
-type Props = {
-  paste: Paste
-}
-
-function PastePage({ paste }: Props) {
   if (!paste) {
     return <pre>Paste not found</pre>
   }
-  return <pre>{JSON.stringify(paste, null, 4)}</pre>
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context?.params as IPageParams
-
-  try {
-    const paste = await prisma.paste.update({
-      where: {
-        id,
-      },
-      data: {
-        views: {
-          increment: 1,
-        },
-        lastViewedAt: new Date(),
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-          },
-        },
-      },
-    })
-
-    return {
-      props: {
-        paste,
-      },
-    }
-  } catch (e) {
-    return {
-      props: {
-        paste: null,
-      },
-    }
-  }
+  return <pre>{JSON.stringify(paste.data, null, 4)}</pre>
 }
 
 export default PastePage
