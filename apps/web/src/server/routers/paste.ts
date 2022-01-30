@@ -12,6 +12,7 @@ import { createRouter } from '../create-router'
 import { buildSupabasePublicUrl, contentSizeInBytes } from '@/utils/helpers'
 import supabase from '@/utils/supabase'
 import prisma from '@/utils/prisma'
+import { addPasteSchema } from '@/validators/paste'
 
 const CONTENT_BYTESIZE_THRESHOLD = 100 * 1000
 
@@ -46,9 +47,7 @@ async function getPasteContentAndUrl(content: string): Promise<{ content: string
 export const pasteRouter = createRouter()
   // create
   .mutation('add', {
-    input: z.object({
-      content: z.string().min(1),
-    }),
+    input: addPasteSchema,
     async resolve({ ctx, input }) {
       const session = await getSession({ ctx })
       const fullContent = input.content
