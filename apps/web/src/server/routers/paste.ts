@@ -51,7 +51,7 @@ export const pasteRouter = createRouter()
     async resolve({ ctx, input }) {
       const session = await getSession({ ctx })
       const fullContent = input.content
-      let { content, url } = await getPasteContentAndUrl(fullContent)
+      const { content, url } = await getPasteContentAndUrl(fullContent)
 
       const dbPaste = await prisma.paste.create({
         data: {
