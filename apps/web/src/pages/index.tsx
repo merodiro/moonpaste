@@ -1,14 +1,21 @@
-import { useState } from 'react'
 import Layout from '@/components/layout'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import { Textarea, Button, Grid, Loading } from '@nextui-org/react'
 import { trpc } from '@/utils/trpc'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addPasteSchema } from '@/validators/paste'
 import { z } from 'zod'
+import {
+  Textarea,
+  Box,
+  Button,
+  Container,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+} from '@chakra-ui/react'
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -25,34 +32,44 @@ const Home: NextPage = () => {
         <title>Moon Paste</title>
       </Head>
 
-      <Grid.Container gap={2} justify="center">
-        <Grid xs={6}>
-          <div className="flex flex-col items-end">
-            <form
-              onSubmit={handleSubmit(async (values) => {
-                const paste = await addPaste.mutateAsync(values)
-                router.push(`/paste/${paste.id}`)
-              })}
-            >
-              <Textarea
-                rows={30}
-                cols={70}
-                placeholder="your paste here :)"
-                color={formState.errors.content ? 'error' : 'default'}
-                status={formState.errors.content ? 'error' : 'default'}
-                helperColor={formState.errors.content ? 'error' : 'default'}
-                helperText={formState.errors.content?.message}
-                {...register('content')}
-              />
+      <Container maxW="container.xl" mt="6">
+        <Flex>
+          <Box xs={6}>
+            <div className="flex flex-col items-end">
+              <form
+                onSubmit={handleSubmit(async (values) => {
+                  const paste = await addPaste.mutateAsync(values)
+                  router.push(`/paste/${paste.id}`)
+                })}
+              >
+                <FormControl isInvalid={!!formState.errors.content}>
+                  <Textarea
+                    rows={30}
+                    cols={70}
+                    placeholder="your paste here :)"
+                    {...register('content')}
+                  />
 
-              <Button className="mt-6" size="sm" auto ghost type="submit">
-                {addPaste.isLoading ? <Loading color="white" size="sm" /> : 'Create paste'}
-              </Button>
-            </form>
-          </div>
-        </Grid>
-        <Grid xs={4}></Grid>
-      </Grid.Container>
+                  {!!formState.errors.content && (
+                    <FormErrorMessage>{formState.errors.content.message}</FormErrorMessage>
+                  )}
+                </FormControl>
+
+                <Button
+                  isLoading={addPaste.isLoading}
+                  mt="6"
+                  colorScheme="blue"
+                  variant="outline"
+                  type="submit"
+                >
+                  Create paste
+                </Button>
+              </form>
+            </div>
+          </Box>
+          <Box></Box>
+        </Flex>
+      </Container>
     </Layout>
   )
 }

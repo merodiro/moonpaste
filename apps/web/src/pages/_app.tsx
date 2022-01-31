@@ -1,37 +1,27 @@
-import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { SessionProvider } from 'next-auth/react'
-import { createTheme, NextUIProvider } from '@nextui-org/react'
-import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { withTRPC } from '@trpc/next'
 import { AppRouter } from '@/server/routers/_app'
 import { loggerLink } from '@trpc/client/links/loggerLink'
 import { httpBatchLink } from '@trpc/client/links/httpBatchLink'
 import superjson from 'superjson'
+import { ChakraProvider, extendTheme, ThemeConfig } from '@chakra-ui/react'
 
-const lightTheme = createTheme({
-  type: 'light',
-})
+// 2. Add your color mode config
+const config: ThemeConfig = {
+  initialColorMode: 'system',
+  useSystemColorMode: false,
+}
 
-const darkTheme = createTheme({
-  type: 'dark',
-})
+// 3. extend the theme
+const theme = extendTheme({ config })
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider>
-      <NextThemesProvider
-        defaultTheme="system"
-        attribute="class"
-        value={{
-          light: lightTheme.className,
-          dark: darkTheme.className,
-        }}
-      >
-        <NextUIProvider disableBaseline>
-          <Component {...pageProps} />
-        </NextUIProvider>
-      </NextThemesProvider>
+      <ChakraProvider theme={theme}>
+        <Component {...pageProps} />
+      </ChakraProvider>
     </SessionProvider>
   )
 }
