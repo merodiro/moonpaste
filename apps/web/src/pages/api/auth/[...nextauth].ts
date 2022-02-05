@@ -1,15 +1,11 @@
-import NextAuth, { Session, User } from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google'
+import NextAuth from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import prisma from '@/utils/prisma'
 
 export default NextAuth({
-  secret: process.env.NEXTAUTH_SECRET,
   adapter: {
     ...PrismaAdapter(prisma),
-    // @ts-expect-error simplelogin adds `user` to the data
     linkAccount: ({ user, ...data }) => prisma.account.create({ data }),
   },
   providers: [
