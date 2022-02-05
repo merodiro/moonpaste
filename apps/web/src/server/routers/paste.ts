@@ -12,7 +12,7 @@ import { createRouter } from '../create-router'
 import { buildSupabasePublicUrl, contentSizeInBytes } from '@/utils/helpers'
 import supabase from '@/utils/supabase'
 import prisma from '@/utils/prisma'
-import { addPasteSchema } from '@/validators/paste'
+import { addPasteSchema, updatePasteViewsSchema } from '@/validators/paste'
 
 const CONTENT_BYTESIZE_THRESHOLD = 100 * 1000
 
@@ -49,7 +49,7 @@ export const pasteRouter = createRouter()
   .mutation('add', {
     input: addPasteSchema,
     async resolve({ ctx, input }) {
-      const session = await getSession({ ctx })
+      const session = await getSession({ req: ctx.req })
       const fullContent = input.content
       const { content, url } = await getPasteContentAndUrl(fullContent)
 
@@ -58,6 +58,24 @@ export const pasteRouter = createRouter()
           content,
           url,
           userId: session?.id as string | undefined,
+        },
+      })
+      return dbPaste
+    },
+  })
+  .mutation('updateViews', {
+    input: updatePasteViewsSchema,
+    async resolve({ ctx, input }) {
+      const pasteId = input.id
+      const dbPaste = await prisma.paste.update({
+        where: {
+          id: pasteId,
+        },
+        data: {
+          views: {
+            increment: 1,
+          },
+          lastViewedAt: new Date(),
         },
       })
       return dbPaste
@@ -81,7 +99,7 @@ export const pasteRouter = createRouter()
   })
   .query('byId', {
     input: z.object({
-      id: z.string(),
+      id: z.string().cuid(),
     }),
     async resolve({ ctx, input }) {
       const { id } = input
@@ -90,6 +108,8 @@ export const pasteRouter = createRouter()
         select: {
           id: true,
           content: true,
+          views: true,
+          lastViewedAt: true,
           user: {
             select: {
               id: true,
