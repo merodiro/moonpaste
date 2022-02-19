@@ -1,27 +1,29 @@
 import Layout from '@/components/layout'
-import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import Head from 'next/head'
 import { trpc } from '@/utils/trpc'
-import { Controller, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { addPasteSchema } from '@/validators/paste'
-import { z } from 'zod'
 import {
-  Grid, GridItem,
-  Textarea,
-  Box,
   Button,
   Container,
-  Flex,
   FormControl,
   FormErrorMessage,
+  Grid,
+  GridItem,
+  Select,
 } from '@chakra-ui/react'
-import Editor from "@monaco-editor/react";
+import { zodResolver } from '@hookform/resolvers/zod'
+import Editor from '@monaco-editor/react'
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { LanguageList } from '../lib/language-list'
 
 const Home: NextPage = () => {
   const router = useRouter()
   const addPaste = trpc.useMutation('paste.add')
+  const [selectedLanguage, setSelectedLanguage] = useState('plaintext')
 
   const { control, handleSubmit, formState } = useForm<z.TypeOf<typeof addPasteSchema>>({
     resolver: zodResolver(addPasteSchema),
@@ -35,7 +37,25 @@ const Home: NextPage = () => {
       </Head>
 
       <Container maxW="container.xl" mt="6">
-        <Grid templateColumns='3fr 1fr' gap={6}>
+        <Grid>
+          <GridItem>
+            <Select
+              placeholder="Select option"
+              defaultValue={selectedLanguage}
+              onChange={(e) => {
+                setSelectedLanguage(e.target.value)
+              }}
+            >
+              {LanguageList.map((language) => (
+                <option value={language} key={language}>
+                  {language}
+                </option>
+              ))}
+            </Select>
+          </GridItem>
+          <GridItem></GridItem>
+        </Grid>
+        <Grid templateColumns="3fr 1fr" gap={6}>
           <GridItem>
             <div>
               <form
@@ -45,26 +65,25 @@ const Home: NextPage = () => {
                 })}
               >
                 <FormControl isInvalid={!!formState.errors.content}>
-
                   <Controller
                     control={control}
                     name="content"
-                    render={
-                      ({ field }) => (
-                        <Editor
-                          height="500px"
-                          width="100%"
-                          theme='vs-dark'
-                          defaultLanguage="javascript"
-                          onChange={(code) => field.onChange(code)}
-                          value={field.value}
-                          options={{
-                            minimap: {
-                              enabled: false
-                            }
-                          }}
-                        />
-                      )}
+                    render={({ field }) => (
+                      <Editor
+                        height="500px"
+                        width="100%"
+                        theme="vs-dark"
+                        defaultLanguage="plaintext"
+                        language={selectedLanguage}
+                        onChange={(code) => field.onChange(code)}
+                        value={field.value}
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                        }}
+                      />
+                    )}
                   />
 
                   {!!formState.errors.content && (
