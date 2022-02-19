@@ -26,6 +26,12 @@ function PastePage() {
           value={paste.data?.content}
           height="500px"
           width="100%"
+          options={{
+            minimap: {
+              enabled: false
+            },
+            readOnly: true
+          }}
         />
       </Container>
     </Layout>

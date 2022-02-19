@@ -58,6 +58,11 @@ const Home: NextPage = () => {
                           defaultLanguage="javascript"
                           onChange={(code) => field.onChange(code)}
                           value={field.value}
+                          options={{
+                            minimap: {
+                              enabled: false
+                            }
+                          }}
                         />
                       )}
                   />
