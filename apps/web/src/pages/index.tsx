@@ -34,7 +34,7 @@ const Home: NextPage = () => {
 
       <Container maxW="container.xl" mt="6">
         <Flex>
-          <Box xs={6}>
+          <Box>
             <div className="flex flex-col items-end">
               <form
                 onSubmit={handleSubmit(async (values) => {

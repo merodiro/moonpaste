@@ -6,6 +6,7 @@ import prisma from '@/utils/prisma'
 export default NextAuth({
   adapter: {
     ...PrismaAdapter(prisma),
+    // @ts-expect-error simplelogin adds `user` to the data
     linkAccount: ({ user, ...data }) => prisma.account.create({ data }),
   },
   providers: [
