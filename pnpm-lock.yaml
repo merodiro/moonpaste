@@ -15,6 +15,7 @@ importers:
       '@emotion/react': ^11.8.0
       '@emotion/styled': ^11.8.0
       '@hookform/resolvers': ^2.8.8
+      '@monaco-editor/react': ^4.3.1
       '@next-auth/prisma-adapter': ^1.0.1
       '@prisma/client': ^3.9.2
       '@supabase/supabase-js': ^1.30.3
@@ -46,6 +47,7 @@ importers:
       '@emotion/react': 11.8.0_a0c521d4794c7ad97f5f4c1c4a7d5818
       '@emotion/styled': 11.8.0_c6c03fa26ad271c5ee3a3054e3bacb8b
       '@hookform/resolvers': 2.8.8_react-hook-form@7.27.1
+      '@monaco-editor/react': 4.3.1_react-dom@17.0.2+react@17.0.2
       '@next-auth/prisma-adapter': 1.0.1_70d3081216d0565c9f0633a892151ad2
       '@prisma/client': 3.9.2_prisma@3.9.2
       '@supabase/supabase-js': 1.30.3
@@ -1120,6 +1122,27 @@ packages:
   /@humanwhocodes/object-schema/1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
+
+  /@monaco-editor/loader/1.2.0:
+    resolution: {integrity: sha512-cJVCG/T/KxXgzYnjKqyAgsKDbH9mGLjcXxN6AmwumBwa2rVFkwvGcUj1RJtD0ko4XqLqJxwqsN/Z/KURB5f1OQ==}
+    peerDependencies:
+      monaco-editor: '>= 0.21.0 < 1'
+    dependencies:
+      state-local: 1.0.7
+    dev: false
+
+  /@monaco-editor/react/4.3.1_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-f+0BK1PP/W5I50hHHmwf11+Ea92E5H1VZXs+wvKplWUWOfyMa1VVwqkJrXjRvbcqHL+XdIGYWhWNdi4McEvnZg==}
+    peerDependencies:
+      monaco-editor: '>= 0.25.0 < 1'
+      react: ^16.8.0 || ^17.0.0
+      react-dom: ^16.8.0 || ^17.0.0
+    dependencies:
+      '@monaco-editor/loader': 1.2.0
+      prop-types: 15.8.1
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
 
   /@next-auth/prisma-adapter/1.0.1_70d3081216d0565c9f0633a892151ad2:
     resolution: {integrity: sha512-oZ1yDs5pSz19JvyYkIuf52CHpCc79ND/VYl3sX8Cwy3TaTfGgZWHRJfdcj3ordFNKIPxlV2qBYIX2UjgmSyTqQ==}
@@ -3323,6 +3346,10 @@ packages:
   /source-map/0.5.7:
     resolution: {integrity: sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /state-local/1.0.7:
+    resolution: {integrity: sha512-HTEHMNieakEnoe33shBYcZ7NX83ACUjCu8c40iOGEZsngj9zRnkqS9j1pqQPXwobB0ZcVTk27REb7COQ0UR59w==}
     dev: false
 
   /string.prototype.matchall/4.0.6:

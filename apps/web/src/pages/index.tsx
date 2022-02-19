@@ -3,11 +3,12 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { trpc } from '@/utils/trpc'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addPasteSchema } from '@/validators/paste'
 import { z } from 'zod'
 import {
+  Grid, GridItem,
   Textarea,
   Box,
   Button,
@@ -16,12 +17,13 @@ import {
   FormControl,
   FormErrorMessage,
 } from '@chakra-ui/react'
+import Editor from "@monaco-editor/react";
 
 const Home: NextPage = () => {
   const router = useRouter()
   const addPaste = trpc.useMutation('paste.add')
 
-  const { register, handleSubmit, formState } = useForm<z.TypeOf<typeof addPasteSchema>>({
+  const { control, handleSubmit, formState } = useForm<z.TypeOf<typeof addPasteSchema>>({
     resolver: zodResolver(addPasteSchema),
     reValidateMode: 'onChange',
   })
@@ -33,9 +35,9 @@ const Home: NextPage = () => {
       </Head>
 
       <Container maxW="container.xl" mt="6">
-        <Flex>
-          <Box>
-            <div className="flex flex-col items-end">
+        <Grid templateColumns='3fr 1fr' gap={6}>
+          <GridItem>
+            <div>
               <form
                 onSubmit={handleSubmit(async (values) => {
                   const paste = await addPaste.mutateAsync(values)
@@ -43,11 +45,21 @@ const Home: NextPage = () => {
                 })}
               >
                 <FormControl isInvalid={!!formState.errors.content}>
-                  <Textarea
-                    rows={30}
-                    cols={70}
-                    placeholder="your paste here :)"
-                    {...register('content')}
+
+                  <Controller
+                    control={control}
+                    name="content"
+                    render={
+                      ({ field }) => (
+                        <Editor
+                          height="500px"
+                          width="100%"
+                          theme='vs-dark'
+                          defaultLanguage="javascript"
+                          onChange={(code) => field.onChange(code)}
+                          value={field.value}
+                        />
+                      )}
                   />
 
                   {!!formState.errors.content && (
@@ -66,9 +78,9 @@ const Home: NextPage = () => {
                 </Button>
               </form>
             </div>
-          </Box>
-          <Box></Box>
-        </Flex>
+          </GridItem>
+          <GridItem></GridItem>
+        </Grid>
       </Container>
     </Layout>
   )

@@ -1,6 +1,9 @@
 import { useEffect, useCallback } from 'react'
 import { trpc } from '@/utils/trpc'
 import { useRouter } from 'next/router'
+import Layout from '@/components/layout'
+import Editor from '@monaco-editor/react'
+import { Container } from '@chakra-ui/react'
 
 function PastePage() {
   const router = useRouter()
@@ -14,7 +17,19 @@ function PastePage() {
   if (!paste) {
     return <pre>Paste not found</pre>
   }
-  return <pre>{JSON.stringify(paste.data, null, 4)}</pre>
+  return (
+    <Layout>
+      <Container maxW="container.xl" mt="6">
+        <Editor
+          language="javascript"
+          theme='vs-dark'
+          value={paste.data?.content}
+          height="500px"
+          width="100%"
+        />
+      </Container>
+    </Layout>
+  )
 }
 
 export default PastePage
