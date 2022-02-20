@@ -21,16 +21,16 @@ function PastePage() {
     <Layout>
       <Container maxW="container.xl" mt="6">
         <Editor
-          language="javascript"
-          theme='vs-dark'
+          language={paste.data?.language}
+          theme="vs-dark"
           value={paste.data?.content}
           height="500px"
           width="100%"
           options={{
             minimap: {
-              enabled: false
+              enabled: false,
             },
-            readOnly: true
+            readOnly: true,
           }}
         />
       </Container>

@@ -15,6 +15,7 @@ model Paste {
   id           String   @id @default(cuid())
   userId       String?  @map("user_id")
   content      String
+  language     String   @default("plaintext")
   url          String?
   views        Int      @default(1)
   lastViewedAt DateTime @default(now()) @map("last_viewed_at")

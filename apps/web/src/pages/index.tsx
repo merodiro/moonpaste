@@ -60,7 +60,10 @@ const Home: NextPage = () => {
             <div>
               <form
                 onSubmit={handleSubmit(async (values) => {
-                  const paste = await addPaste.mutateAsync(values)
+                  const paste = await addPaste.mutateAsync({
+                    ...values,
+                    language: selectedLanguage,
+                  })
                   router.push(`/paste/${paste.id}`)
                 })}
               >
@@ -70,7 +73,7 @@ const Home: NextPage = () => {
                     name="content"
                     render={({ field }) => (
                       <Editor
-                        height="500px"
+                        height="75vh"
                         width="100%"
                         theme="vs-dark"
                         defaultLanguage="plaintext"
@@ -81,6 +84,7 @@ const Home: NextPage = () => {
                           minimap: {
                             enabled: false,
                           },
+                          lineNumbers: selectedLanguage === 'plaintext' ? 'off' : 'on',
                         }}
                       />
                     )}
