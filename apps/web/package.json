@@ -24,6 +24,7 @@
     "@trpc/next": "^9.19.0",
     "@trpc/react": "^9.19.0",
     "@trpc/server": "^9.19.0",
+    "chakra-react-select": "^3.0.4",
     "framer-motion": "^6.2.6",
     "next": "12.1.0",
     "next-auth": "^4.2.1",

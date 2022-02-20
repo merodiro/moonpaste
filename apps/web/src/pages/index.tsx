@@ -4,13 +4,11 @@ import { addPasteSchema } from '@/validators/paste'
 import {
   Box,
   Button,
-  Container,
   FormControl,
   FormErrorMessage,
   Grid,
   GridItem,
   Icon,
-  Select,
   Tooltip,
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,17 +16,19 @@ import Editor from '@monaco-editor/react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { LanguageList } from '../lib/language-list'
 import { SiJavascript, SiHtml5, SiTypescript } from 'react-icons/si'
+import { Select } from 'chakra-react-select'
+
+const langOptions = LanguageList.map((lang) => ({ label: lang, value: lang }))
 
 const Home: NextPage = () => {
   const router = useRouter()
   const addPaste = trpc.useMutation('paste.add')
 
-  const { control, handleSubmit, formState, register, watch, setValue } = useForm<
+  const { control, handleSubmit, formState, watch, setValue } = useForm<
     z.TypeOf<typeof addPasteSchema>
   >({
     resolver: zodResolver(addPasteSchema),
@@ -128,13 +128,20 @@ const Home: NextPage = () => {
               </Box>
             </Box>
             <Box flex={1} mt={6}>
-              <Select placeholder="Select option" {...register('language')}>
-                {LanguageList.map((language) => (
-                  <option value={language} key={language}>
-                    {language}
-                  </option>
-                ))}
-              </Select>
+              <Controller
+                name="language"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    options={langOptions}
+                    ref={field.ref}
+                    name={field.name}
+                    onBlur={field.onBlur}
+                    value={{ value: field.value, label: field.value }}
+                    onChange={(e) => field.onChange(e?.value)}
+                  />
+                )}
+              />
             </Box>
 
             <Button
