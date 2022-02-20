@@ -4,13 +4,8 @@
       "cache": false
     },
     "build": {
-      "outputs": [
-        "dist/**",
-        ".next/**"
-      ],
-      "dependsOn": [
-        "^build"
-      ]
+      "outputs": ["dist/**", ".next/**"],
+      "dependsOn": ["^build"]
     }
   }
 }

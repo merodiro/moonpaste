@@ -2,13 +2,16 @@ import Layout from '@/components/layout'
 import { trpc } from '@/utils/trpc'
 import { addPasteSchema } from '@/validators/paste'
 import {
+  Box,
   Button,
   Container,
   FormControl,
   FormErrorMessage,
   Grid,
   GridItem,
+  Icon,
   Select,
+  Tooltip,
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Editor from '@monaco-editor/react'
@@ -19,15 +22,20 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { LanguageList } from '../lib/language-list'
+import { SiJavascript, SiHtml5, SiTypescript } from 'react-icons/si'
 
 const Home: NextPage = () => {
   const router = useRouter()
   const addPaste = trpc.useMutation('paste.add')
-  const [selectedLanguage, setSelectedLanguage] = useState('plaintext')
 
-  const { control, handleSubmit, formState } = useForm<z.TypeOf<typeof addPasteSchema>>({
+  const { control, handleSubmit, formState, register, watch, setValue } = useForm<
+    z.TypeOf<typeof addPasteSchema>
+  >({
     resolver: zodResolver(addPasteSchema),
     reValidateMode: 'onChange',
+    defaultValues: {
+      language: 'plaintext',
+    },
   })
 
   return (
@@ -36,80 +44,111 @@ const Home: NextPage = () => {
         <title>Moon Paste</title>
       </Head>
 
-      <Container maxW="container.xl" mt="6">
-        <Grid>
-          <GridItem>
-            <Select
-              placeholder="Select option"
-              defaultValue={selectedLanguage}
-              onChange={(e) => {
-                setSelectedLanguage(e.target.value)
-              }}
-            >
-              {LanguageList.map((language) => (
-                <option value={language} key={language}>
-                  {language}
-                </option>
-              ))}
-            </Select>
-          </GridItem>
-          <GridItem></GridItem>
-        </Grid>
-        <Grid templateColumns="3fr 1fr" gap={6}>
+      <Box
+        mt="6"
+        mx="6"
+        as="form"
+        onSubmit={handleSubmit(async (values) => {
+          const paste = await addPaste.mutateAsync(values)
+          router.push(`/paste/${paste.id}`)
+        })}
+      >
+        <Grid templateColumns="5fr 1fr" gap={6}>
           <GridItem>
             <div>
-              <form
-                onSubmit={handleSubmit(async (values) => {
-                  const paste = await addPaste.mutateAsync({
-                    ...values,
-                    language: selectedLanguage,
-                  })
-                  router.push(`/paste/${paste.id}`)
-                })}
-              >
-                <FormControl isInvalid={!!formState.errors.content}>
-                  <Controller
-                    control={control}
-                    name="content"
-                    render={({ field }) => (
-                      <Editor
-                        height="75vh"
-                        width="100%"
-                        theme="vs-dark"
-                        defaultLanguage="plaintext"
-                        language={selectedLanguage}
-                        onChange={(code) => field.onChange(code)}
-                        value={field.value}
-                        options={{
-                          minimap: {
-                            enabled: false,
-                          },
-                          lineNumbers: selectedLanguage === 'plaintext' ? 'off' : 'on',
-                        }}
-                      />
-                    )}
-                  />
-
-                  {!!formState.errors.content && (
-                    <FormErrorMessage>{formState.errors.content.message}</FormErrorMessage>
+              <FormControl isInvalid={!!formState.errors.content}>
+                <Controller
+                  control={control}
+                  name="content"
+                  render={({ field }) => (
+                    <Editor
+                      height="75vh"
+                      width="100%"
+                      theme="vs-dark"
+                      defaultLanguage="plaintext"
+                      language={watch('language')}
+                      onChange={(code) => field.onChange(code)}
+                      value={field.value}
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        lineNumbers: watch('language') === 'plaintext' ? 'off' : 'on',
+                      }}
+                    />
                   )}
-                </FormControl>
+                />
 
-                <Button
-                  isLoading={addPaste.isLoading}
-                  mt="6"
-                  colorScheme="blue"
-                  variant="outline"
-                  type="submit"
-                >
-                  Create paste
-                </Button>
-              </form>
+                {!!formState.errors.content && (
+                  <FormErrorMessage>{formState.errors.content.message}</FormErrorMessage>
+                )}
+              </FormControl>
             </div>
           </GridItem>
-          <GridItem></GridItem>
+          <GridItem display="flex" flexDir="column">
+            <Box>
+              <Box
+                as="button"
+                display="inline-flex"
+                mr="4"
+                type="button"
+                onClick={() => setValue('language', 'javascript')}
+              >
+                <Tooltip label="JavaScript" placement="top">
+                  <span>
+                    <Icon as={SiJavascript} w={8} h={8} color="yellow.500" />
+                  </span>
+                </Tooltip>
+              </Box>
+              <Box
+                as="button"
+                display="inline-flex"
+                mr="4"
+                type="button"
+                onClick={() => setValue('language', 'html')}
+              >
+                <Tooltip label="HTML" placement="top">
+                  <span>
+                    <Icon as={SiHtml5} w={8} h={8} color="red.500" />
+                  </span>
+                </Tooltip>
+              </Box>
+              <Box
+                as="button"
+                display="inline-flex"
+                mr="4"
+                type="button"
+                onClick={() => setValue('language', 'typescript')}
+              >
+                <Tooltip label="TypeScript" placement="top">
+                  <span>
+                    <Icon as={SiTypescript} w={8} h={8} color="blue.500" />
+                  </span>
+                </Tooltip>
+              </Box>
+            </Box>
+            <Box flex={1} mt={6}>
+              <Select placeholder="Select option" {...register('language')}>
+                {LanguageList.map((language) => (
+                  <option value={language} key={language}>
+                    {language}
+                  </option>
+                ))}
+              </Select>
+            </Box>
+
+            <Button
+              isLoading={addPaste.isLoading}
+              mt="6"
+              colorScheme="blue"
+              variant="outline"
+              type="submit"
+            >
+              Create paste
+            </Button>
+          </GridItem>
         </Grid>
-      </Container>
+      </Box>
     </Layout>
   )
 }
