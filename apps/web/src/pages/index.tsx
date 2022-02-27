@@ -13,14 +13,14 @@ import {
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Editor from '@monaco-editor/react'
+import { Select } from 'chakra-react-select'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Controller, useForm } from 'react-hook-form'
+import { SiHtml5, SiJavascript, SiTypescript } from 'react-icons/si'
 import { z } from 'zod'
 import { LanguageList } from '../lib/language-list'
-import { SiJavascript, SiHtml5, SiTypescript } from 'react-icons/si'
-import { Select } from 'chakra-react-select'
 
 const langOptions = LanguageList.map((lang) => ({ label: lang, value: lang }))
 
