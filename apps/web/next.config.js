@@ -4,6 +4,9 @@ const nextConfig = {
   images: {
     domains: [],
   },
+  experimental: {
+    runtime: 'experimental-edge',
+  },
 }
 
 module.exports = nextConfig
