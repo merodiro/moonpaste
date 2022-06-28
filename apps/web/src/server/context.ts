@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client/edge'
 import * as trpcNext from '@trpc/server/adapters/next'
 import * as trpc from '@trpc/server'
 import { getSession } from 'next-auth/react'
