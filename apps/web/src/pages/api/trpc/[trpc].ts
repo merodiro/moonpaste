@@ -32,7 +32,3 @@ export default trpcNext.createNextApiHandler<AppRouter>({
     enabled: true,
   },
 })
-
-export const config = {
-  runtime: 'experimental-edge',
-}

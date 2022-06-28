@@ -42,7 +42,3 @@ export default NextAuth({
     },
   },
 })
-
-export const config = {
-  runtime: 'experimental-edge',
-}

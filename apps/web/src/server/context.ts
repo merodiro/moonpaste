@@ -12,7 +12,7 @@ const prisma = new PrismaClient({
  */
 export const createContext = async ({ req, res }: trpcNext.CreateNextContextOptions) => {
   const session = await getSession({ req })
-  console.log('createContext for', session?.user?.name ?? 'unknown user')
+
   return {
     req,
     res,
