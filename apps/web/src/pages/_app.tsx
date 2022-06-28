@@ -5,27 +5,35 @@ import { AppRouter } from '@/server/routers/_app'
 import { loggerLink } from '@trpc/client/links/loggerLink'
 import { httpBatchLink } from '@trpc/client/links/httpBatchLink'
 import superjson from 'superjson'
-import { ChakraProvider, extendTheme, ThemeConfig } from '@chakra-ui/react'
+import { ChakraProvider, cookieStorageManagerSSR, extendTheme, ThemeConfig } from '@chakra-ui/react'
 
 // 2. Add your color mode config
 const config: ThemeConfig = {
   initialColorMode: 'system',
-  useSystemColorMode: false,
+  useSystemColorMode: true,
 }
 
 // 3. extend the theme
 const theme = extendTheme({ config })
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const manager = cookieStorageManagerSSR(pageProps.cookie)
+
+  console.log('pageProps', pageProps.cookie)
+
   return (
     <SessionProvider>
-      <ChakraProvider theme={theme}>
+      <ChakraProvider theme={theme} colorModeManager={manager}>
         <Component {...pageProps} />
       </ChakraProvider>
     </SessionProvider>
   )
 }
 
+/**
+ * If you want to use SSR, you need to use the server's full URL
+ * @link https://trpc.io/docs/ssr
+ */
 function getBaseUrl() {
   if (process.browser) {
     return ''
@@ -46,14 +54,6 @@ function getBaseUrl() {
 
 export default withTRPC<AppRouter>({
   config({ ctx }) {
-    /**
-     * If you want to use SSR, you need to use the server's full URL
-     * @link https://trpc.io/docs/ssr
-     */
-    const url = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}/api/trpc`
-      : 'http://localhost:3000/api/trpc'
-
     return {
       /**
        * @link https://react-query.tanstack.com/reference/QueryClient
