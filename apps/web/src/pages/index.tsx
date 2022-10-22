@@ -27,7 +27,7 @@ const langOptions = LanguageList.map((lang) => ({ label: lang, value: lang }))
 
 const Home: NextPage = () => {
   const router = useRouter()
-  const addPaste = trpc.useMutation('paste.add')
+  const addPaste = trpc.paste.add.useMutation()
 
   const { control, handleSubmit, formState, watch, setValue } = useForm<
     z.TypeOf<typeof addPasteSchema>
