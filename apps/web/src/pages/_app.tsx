@@ -1,23 +1,13 @@
 import type { AppProps } from 'next/app'
 import { SessionProvider } from 'next-auth/react'
-import { ChakraProvider, cookieStorageManagerSSR, extendTheme, ThemeConfig } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react'
 import { trpc } from '@/utils/trpc'
-
-const config: ThemeConfig = {
-  initialColorMode: 'system',
-  useSystemColorMode: true,
-}
-
-const theme = extendTheme({ config })
+import theme from '@/theme/theme'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const manager = cookieStorageManagerSSR(pageProps.cookie)
-
-  console.log('pageProps', pageProps.cookie)
-
   return (
     <SessionProvider>
-      <ChakraProvider theme={theme} colorModeManager={manager}>
+      <ChakraProvider theme={theme}>
         <Component {...pageProps} />
       </ChakraProvider>
     </SessionProvider>
