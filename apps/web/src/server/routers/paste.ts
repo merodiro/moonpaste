@@ -8,7 +8,7 @@ import { TRPCError } from '@trpc/server'
 import { getSession } from 'next-auth/react'
 import { v4 as uuidv4 } from 'uuid'
 
-import { createRouter } from '../create-router'
+import { publicProcedure, router } from '../trpc'
 import { buildSupabasePublicUrl, contentSizeInBytes } from '@/utils/helpers'
 import supabase from '@/utils/supabase'
 import prisma from '@/utils/prisma'
@@ -31,79 +31,71 @@ async function getPasteContentAndUrl(content: string): Promise<{ content: string
         upsert: false,
       })
 
-    if (error || !data?.Key) {
+    if (error || !data?.path) {
       throw error ?? new Error('unable to create paste')
     }
 
     return {
       content: contentChunk,
-      url: buildSupabasePublicUrl(data.Key),
+      url: buildSupabasePublicUrl(data.path),
     }
   } else {
     return { content }
   }
 }
 
-export const pasteRouter = createRouter()
-  // create
-  .mutation('add', {
-    input: addPasteSchema,
-    async resolve({ ctx, input }) {
-      const session = await getSession({ req: ctx.req })
-      const { content: fullContent, language } = input
-      const { content, url } = await getPasteContentAndUrl(fullContent)
+export const pasteRouter = router({
+  add: publicProcedure.input(addPasteSchema).mutation(async ({ input, ctx }) => {
+    const session = await getSession({ req: ctx.req })
+    const { content: fullContent, language } = input
+    const { content, url } = await getPasteContentAndUrl(fullContent)
 
-      const dbPaste = await prisma.paste.create({
-        data: {
-          content,
-          language,
-          url,
-          userId: session?.id as string | undefined,
+    const dbPaste = await prisma.paste.create({
+      data: {
+        content,
+        language,
+        url,
+        userId: session?.user.id,
+      },
+    })
+    return dbPaste
+  }),
+  updateViews: publicProcedure.input(updatePasteViewsSchema).mutation(async ({ input, ctx }) => {
+    const pasteId = input.id
+    const dbPaste = await prisma.paste.update({
+      where: {
+        id: pasteId,
+      },
+      data: {
+        views: {
+          increment: 1,
         },
-      })
-      return dbPaste
-    },
-  })
-  .mutation('updateViews', {
-    input: updatePasteViewsSchema,
-    async resolve({ ctx, input }) {
-      const pasteId = input.id
-      const dbPaste = await prisma.paste.update({
-        where: {
-          id: pasteId,
-        },
-        data: {
-          views: {
-            increment: 1,
-          },
-          lastViewedAt: new Date(),
-        },
-      })
-      return dbPaste
-    },
-  })
-  // read
-  .query('all', {
-    async resolve({ ctx }) {
-      /**
-       * For pagination you can have a look at this docs site
-       * @link https://trpc.io/docs/useInfiniteQuery
-       */
+        lastViewedAt: new Date(),
+      },
+    })
+    return dbPaste
+  }),
+  all: publicProcedure.query(({ ctx }) => {
+    /**
+     * For pagination you can have a look at this docs site
+     * @link https://trpc.io/docs/useInfiniteQuery
+     */
 
-      return ctx.prisma.paste.findMany({
-        select: {
-          id: true,
-          content: true,
-          language: true,
-        },
+    return ctx.prisma.paste.findMany({
+      select: {
+        id: true,
+        content: true,
+        language: true,
+      },
+    })
+  }),
+  byId: publicProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
       })
-    },
-  })
-  .query('byId', {
-    input: z.object({
-      id: z.string().cuid(),
-    }),
-    async resolve({ ctx, input }) {
+    )
+    .query(async ({ input, ctx }) => {
       const { id } = input
       const paste = await ctx.prisma.paste.findUnique({
         where: { id },
@@ -134,5 +126,5 @@ export const pasteRouter = createRouter()
         })
       }
       return paste
-    },
-  })
+    }),
+})

@@ -7,8 +7,8 @@ import { Container } from '@chakra-ui/react'
 
 function PastePage() {
   const router = useRouter()
-  const paste = trpc.useQuery(['paste.byId', { id: router.query.id as string }])
-  const updatePasteViewsMutation = trpc.useMutation('paste.updateViews').mutate
+  const paste = trpc.paste.byId.useQuery({ id: router.query.id as string })
+  const updatePasteViewsMutation = trpc.paste.updateViews.useMutation().mutate
 
   useEffect(() => {
     updatePasteViewsMutation({ id: router.query.id as string })

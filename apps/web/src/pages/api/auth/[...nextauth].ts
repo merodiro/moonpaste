@@ -4,15 +4,11 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import prisma from '@/utils/prisma'
 
 export default NextAuth({
-  adapter: {
-    ...PrismaAdapter(prisma),
-    // @ts-expect-error simplelogin adds `user` to the data
-    linkAccount: ({ user, ...data }) => prisma.account.create({ data }),
-  },
+  adapter: PrismaAdapter(prisma),
   providers: [
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     }),
     {
       id: 'simplelogin',
@@ -37,7 +33,9 @@ export default NextAuth({
   ],
   callbacks: {
     session: async ({ session, user }) => {
-      session.id = user.id
+      if (session.user) {
+        session.user.id = user.id
+      }
       return Promise.resolve(session)
     },
   },
